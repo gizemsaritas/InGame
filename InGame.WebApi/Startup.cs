@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using InGame.Business.Containers;
 
 namespace InGame.WebApi
 {
@@ -53,6 +54,8 @@ namespace InGame.WebApi
 
             #endregion
 
+            #region Jwt
+
             services.Configure<JwtInfo>(Configuration.GetSection("JwtInfo"));
             var jwtInfo = Configuration.GetSection("JwtInfo").Get<JwtInfo>();
 
@@ -71,7 +74,13 @@ namespace InGame.WebApi
                     ValidateIssuerSigningKey = true
                 };
             });
+            #endregion
 
+            #region CustomIoC
+
+            services.AddDependencies();
+
+            #endregion
 
         }
 

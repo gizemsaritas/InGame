@@ -1,15 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.32228.343
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33110.190
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InGame.Entities", "InGame.Entities\InGame.Entities.csproj", "{40072504-6BDF-4B6A-9C4C-733A25D64D5E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InGame.DataAccess", "InGame.DataAccess\InGame.DataAccess.csproj", "{7EA8962B-DEBF-481B-A68A-B8E4CD3CF834}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InGame.DataAccess", "InGame.DataAccess\InGame.DataAccess.csproj", "{7EA8962B-DEBF-481B-A68A-B8E4CD3CF834}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InGame.WebApi", "InGame.WebApi\InGame.WebApi.csproj", "{B697388C-A322-4A90-93D9-EE6F2A7684A3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InGame.WebApi", "InGame.WebApi\InGame.WebApi.csproj", "{B697388C-A322-4A90-93D9-EE6F2A7684A3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InGame.Business", "InGame.Business\InGame.Business.csproj", "{5A212FF9-72B0-4EF3-8481-AC335CE3DE8D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InGame.Business", "InGame.Business\InGame.Business.csproj", "{5A212FF9-72B0-4EF3-8481-AC335CE3DE8D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
