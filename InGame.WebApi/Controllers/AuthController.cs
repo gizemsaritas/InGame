@@ -32,5 +32,19 @@ namespace InGame.WebApi.Controllers
 
             return BadRequest("Some proporties are not valid");
         }
+
+        [HttpPost("Login")]
+        [ValidModel]
+        public async Task<IActionResult> LoginAsync(UserLoginDto loginDto)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _userService.LoginUserAsync(loginDto);
+                if (result.ServiceResultType == ServiceResultType.Success) return Ok(result.Data);
+                return BadRequest(result.Message);
+            }
+
+            return BadRequest("Some proporties are not valid");
+        }
     }
 }

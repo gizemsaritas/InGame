@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Schema;
@@ -8,6 +9,7 @@ using InGame.Business.Concrete.DTO.Concrete;
 using InGame.Business.Concrete.DTO.Concrete.User;
 using InGame.Business.Concrete.Enum;
 using InGame.Business.Interface;
+using InGame.Business.Tools.JWT.Interface;
 using Microsoft.AspNetCore.Identity;
 
 namespace InGame.Business.Concrete.Manager
@@ -15,9 +17,12 @@ namespace InGame.Business.Concrete.Manager
     public class UserManager:IUserService
     {
         private readonly UserManager<IdentityUser> _userManager;
-        public UserManager(UserManager<IdentityUser> userManager)
+        private readonly IJwtService _jwtManager;
+
+        public UserManager(UserManager<IdentityUser> userManager, IJwtService jwtManager)
         {
             _userManager = userManager;
+            _jwtManager = jwtManager;
         }
         public async Task<ServiceResult> RegisterUserAsync(UserRegisterDto userRegister)
         {
@@ -61,6 +66,42 @@ namespace InGame.Business.Concrete.Manager
 
             return serviceResult;
             
+        }
+
+        public async Task<ServiceResult> LoginUserAsync(UserLoginDto userLoginDto)
+        {
+            ServiceResult serviceResult = new ServiceResult(ServiceResultType.Notknown);
+            try
+            {
+                var user = await _userManager.FindByEmailAsync(userLoginDto.Email);
+                if (user == null)
+                {
+                    serviceResult.ServiceResultType = ServiceResultType.Error;
+                    serviceResult.Message = "Cant find user from mail";
+                    return serviceResult;
+                }
+
+                var result = await _userManager.CheckPasswordAsync(user, userLoginDto.Password);
+
+                if (!result)
+                {
+                    serviceResult.ServiceResultType = ServiceResultType.Error;
+                    serviceResult.Message = "Invalid password";
+                    return serviceResult;
+                }
+
+                serviceResult.Data=_jwtManager.GenerateJwt(userLoginDto);
+                serviceResult.ServiceResultType = ServiceResultType.Success;
+                return serviceResult;
+
+            }
+            catch (Exception exception)
+            {
+                serviceResult.ServiceResultType = ServiceResultType.Error;
+                serviceResult.Message = exception.Message;
+            }
+
+            return serviceResult;
         }
     }
 }

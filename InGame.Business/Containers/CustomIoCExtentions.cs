@@ -7,6 +7,8 @@ using FluentValidation;
 using InGame.Business.Concrete.DTO.Concrete.User;
 using InGame.Business.Concrete.Manager;
 using InGame.Business.Interface;
+using InGame.Business.Tools.JWT.Concrete;
+using InGame.Business.Tools.JWT.Interface;
 using InGame.Business.Tools.Validations;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -19,12 +21,14 @@ namespace InGame.Business.Containers
             #region Validation
 
             services.AddTransient<IValidator<UserRegisterDto>, UserRegisterValidator>();
+            services.AddTransient<IValidator<UserLoginDto>, UserLoginValidator>();
 
             #endregion
 
             #region DependencyInjection
 
             services.AddScoped<IUserService, UserManager>();
+            services.AddScoped<IJwtService, JwtManager>();
 
             #endregion
         }

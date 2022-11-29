@@ -11,5 +11,6 @@ namespace InGame.Business.Interface
     public interface IUserService
     {
         Task<ServiceResult> RegisterUserAsync(UserRegisterDto userRegisterDto);
+        Task<ServiceResult> LoginUserAsync(UserLoginDto userLoginDto);
     }
 }
