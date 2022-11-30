@@ -12,5 +12,6 @@ namespace InGame.Business.Interface
     {
         Task<ServiceResult> RegisterUserAsync(UserRegisterDto userRegisterDto);
         Task<ServiceResult> LoginUserAsync(UserLoginDto userLoginDto);
+        Task<ServiceResult> ForgetPasswordAsync(string mail);
     }
 }

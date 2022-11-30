@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using InGame.Business.Concrete.DTO.Concrete;
 using InGame.Business.Concrete.DTO.Concrete.User;
 using InGame.Business.Concrete.Enum;
 using InGame.Business.Interface;
@@ -46,5 +47,14 @@ namespace InGame.WebApi.Controllers
 
             return BadRequest("Some proporties are not valid");
         }
-    }
+
+        public async Task<IActionResult> ForgetPasswordAsync(string mail)
+        {
+            if (string.IsNullOrEmpty(mail)) return NotFound();
+            var result = await _userService.ForgetPasswordAsync();
+            if (result.ServiceResultType == ServiceResultType.Success) return Ok(result);
+            return BadRequest(result);
+
+        }
+     }
 }

@@ -11,6 +11,8 @@ using InGame.Business.Concrete.Enum;
 using InGame.Business.Interface;
 using InGame.Business.Tools.JWT.Interface;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.Configuration;
 
 namespace InGame.Business.Concrete.Manager
 {
@@ -18,11 +20,15 @@ namespace InGame.Business.Concrete.Manager
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly IJwtService _jwtManager;
+        private readonly IConfiguration _configuration;
+        private readonly IMailService _mailService;
 
-        public UserManager(UserManager<IdentityUser> userManager, IJwtService jwtManager)
+        public UserManager(UserManager<IdentityUser> userManager, IJwtService jwtManager,IConfiguration configuration, IMailService mailService)
         {
             _userManager = userManager;
             _jwtManager = jwtManager;
+            _configuration = configuration;
+            _mailService = mailService;
         }
         public async Task<ServiceResult> RegisterUserAsync(UserRegisterDto userRegister)
         {
@@ -91,6 +97,47 @@ namespace InGame.Business.Concrete.Manager
                 }
 
                 serviceResult.Data=_jwtManager.GenerateJwt(userLoginDto);
+                serviceResult.ServiceResultType = ServiceResultType.Success;
+                return serviceResult;
+
+            }
+            catch (Exception exception)
+            {
+                serviceResult.ServiceResultType = ServiceResultType.Error;
+                serviceResult.Message = exception.Message;
+            }
+
+            return serviceResult;
+        }
+
+        public async Task<ServiceResult> ForgetPasswordAsync(string mail)
+        {
+            ServiceResult serviceResult = new ServiceResult(ServiceResultType.Notknown);
+            try
+            {
+                var user = await _userManager.FindByEmailAsync(mail);
+                if (user == null)
+                {
+                    serviceResult.ServiceResultType = ServiceResultType.Error;
+                    serviceResult.Message = "Cant find user from mail";
+                    return serviceResult;
+                }
+
+                var token=await _userManager.GeneratePasswordResetTokenAsync(user);
+
+                if (string.IsNullOrEmpty(token))
+                {
+                    serviceResult.ServiceResultType = ServiceResultType.Error;
+                    serviceResult.Message = "Cant generate token";
+                    return serviceResult;
+                }
+
+                var validToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
+
+                string url = $"{_configuration["AppUrl"]} /ResetPassword?mail={mail}&token={validToken}";
+
+                _mailService.SendResetPasswordMailAsync(url,mail);
+
                 serviceResult.ServiceResultType = ServiceResultType.Success;
                 return serviceResult;
 

@@ -29,6 +29,7 @@ namespace InGame.Business.Containers
 
             services.AddScoped<IUserService, UserManager>();
             services.AddScoped<IJwtService, JwtManager>();
+            services.AddScoped<IMailService, IMailService>();
 
             #endregion
         }
