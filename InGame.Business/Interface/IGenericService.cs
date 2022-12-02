@@ -5,19 +5,18 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using InGame.Business.Concrete.DTO.Concrete;
 
 namespace InGame.Business.Interface
 {
     public interface IGenericService<TEntity> where TEntity:class,IEntity,new()
     {
-        Task<List<TEntity>> GetAllAsync();
-        Task<List<TEntity>> GetAllAsync<TKey>(Expression<Func<TEntity, TKey>> keySelector);
-        Task<List<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>> filter);
-        Task<List<TEntity>> GetAllAsync<TKey>(Expression<Func<TEntity, bool>> filter, Expression<Func<TEntity, TKey>> keySelector);
-        Task<TEntity> GetAsync(Expression<Func<TEntity, bool>> filter);
-        Task<TEntity> FindByIdAsync(int id);
-        Task AddAsync(TEntity entity);
-        Task UpdateAsync(TEntity entity);
-        Task RemoveAsync(TEntity entity);
+        Task<ServiceResult> GetAllAsync();
+        Task<ServiceResult> GetAllAsync(Expression<Func<TEntity, bool>> filter);
+        Task<ServiceResult> GetAsync(Expression<Func<TEntity, bool>> filter);
+        Task<ServiceResult> FindByIdAsync(int id);
+        Task<ServiceResult> AddAsync(TEntity entity);
+        Task<ServiceResult> UpdateAsync(TEntity entity);
+        Task<ServiceResult> RemoveAsync(TEntity entity);
     }
 }

@@ -4,6 +4,8 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using InGame.Business.Concrete.DTO.Concrete;
+using InGame.Business.Concrete.Enum;
 using InGame.Business.Interface;
 using InGame.DataAccess.Concrete;
 using InGame.Entities.Interface;
@@ -19,46 +21,160 @@ namespace InGame.Business.Concrete.Manager
         {
             _context = context;
         }
-        public async Task AddAsync(TEntity entity)
+        public async Task<ServiceResult> AddAsync(TEntity entity)
         {
-            await _context.AddAsync(entity);
-            await _context.SaveChangesAsync();
-        }
-        public async Task<TEntity> FindByIdAsync(int id)
-        {
-            return await _context.FindAsync<TEntity>(id);
-        }
-        public async Task<List<TEntity>> GetAllAsync()
-        {
-            return await _context.Set<TEntity>().ToListAsync();
+            ServiceResult serviceResult = new ServiceResult(ServiceResultType.Notknown);
+            try
+            {
+                await _context.AddAsync(entity);
+                var result = await _context.SaveChangesAsync();
+                serviceResult.ServiceResultType = ServiceResultType.Success;
+            }
+            catch (Exception e)
+            {
+                serviceResult.ServiceResultType = ServiceResultType.Error;
+            }
+
+            return serviceResult;
 
         }
-        public async Task<List<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>> filter)
+        public async Task<ServiceResult> FindByIdAsync(int id)
         {
-            return await _context.Set<TEntity>().Where(filter).ToListAsync();
+            ServiceResult serviceResult = new ServiceResult(ServiceResultType.Notknown);
+            try
+            {
+                var result = await _context.FindAsync<TEntity>(id);
+                if (result != null)
+                {
+                    serviceResult.Data = result;
+                    serviceResult.ServiceResultType = ServiceResultType.Success;
+                }
+                else
+                {
+                    serviceResult.ServiceResultType = ServiceResultType.Error;
+                }
+
+            }
+            catch (Exception e)
+            {
+                serviceResult.ServiceResultType = ServiceResultType.Error;
+            }
+
+            return serviceResult;
         }
-        public async Task<List<TEntity>> GetAllAsync<TKey>(Expression<Func<TEntity, bool>> filter, Expression<Func<TEntity, TKey>> keySelector)
+        public async Task<ServiceResult> GetAllAsync()
         {
-            return await _context.Set<TEntity>().Where(filter).OrderByDescending(keySelector).ToListAsync();
-        }
-        public async Task<List<TEntity>> GetAllAsync<TKey>(Expression<Func<TEntity, TKey>> keySelector)
-        {
-            return await _context.Set<TEntity>().OrderByDescending(keySelector).ToListAsync();
-        }
-        public async Task<TEntity> GetAsync(Expression<Func<TEntity, bool>> filter)
-        {
-            return await _context.Set<TEntity>().FirstOrDefaultAsync(filter);
-        }
-        public async Task RemoveAsync(TEntity entity)
-        {
-            _context.Remove(entity);
-            await _context.SaveChangesAsync();
+            ServiceResult serviceResult = new ServiceResult(ServiceResultType.Notknown);
+            try
+            {
+                var result = await _context.Set<TEntity>().ToListAsync();
+                if (result.Any())
+                {
+                    serviceResult.Data = result;
+                    serviceResult.ServiceResultType = ServiceResultType.Success;
+                }
+                else
+                {
+                    serviceResult.ServiceResultType = ServiceResultType.Error;
+                }
+            }
+            catch (Exception e)
+            {
+                serviceResult.ServiceResultType = ServiceResultType.Error;
+            }
+
+            return serviceResult;
 
         }
-        public async Task UpdateAsync(TEntity entity)
+        public async Task<ServiceResult> GetAllAsync(Expression<Func<TEntity, bool>> filter)
         {
-            _context.Update(entity);
-            await _context.SaveChangesAsync();
+            ServiceResult serviceResult = new ServiceResult(ServiceResultType.Notknown);
+            try
+            {
+                var result = await _context.Set<TEntity>().Where(filter).ToListAsync();
+                if (result.Any())
+                {
+                    serviceResult.Data = result;
+                    serviceResult.ServiceResultType = ServiceResultType.Success;
+                }
+                else
+                {
+                    serviceResult.ServiceResultType = ServiceResultType.Error;
+                }
+            }
+            catch (Exception e)
+            {
+                serviceResult.ServiceResultType = ServiceResultType.Error;
+            }
+
+            return serviceResult;
+        }
+        public async Task<ServiceResult> GetAsync(Expression<Func<TEntity, bool>> filter)
+        {
+            ServiceResult serviceResult = new ServiceResult(ServiceResultType.Notknown);
+            try
+            {
+                var result = await _context.Set<TEntity>().FirstOrDefaultAsync(filter);
+                if (result != null)
+                {
+                    serviceResult.Data = result;
+                    serviceResult.ServiceResultType = ServiceResultType.Success;
+                }
+                else
+                {
+                    serviceResult.ServiceResultType = ServiceResultType.Error;
+                }
+            }
+            catch (Exception e)
+            {
+                serviceResult.ServiceResultType = ServiceResultType.Error;
+            }
+
+            return serviceResult;
+
+        }
+        public async Task<ServiceResult> RemoveAsync(TEntity entity)
+        {
+            ServiceResult serviceResult = new ServiceResult(ServiceResultType.Notknown);
+            try
+            {
+                _context.Remove(entity);
+                var result = await _context.SaveChangesAsync();
+                if (result > 0)
+                {
+                    serviceResult.ServiceResultType = ServiceResultType.Success;
+                }
+                else serviceResult.ServiceResultType = ServiceResultType.Error;
+            }
+            catch (Exception e)
+            {
+                serviceResult.ServiceResultType = ServiceResultType.Error;
+            }
+
+            return serviceResult;
+        }
+        public async Task<ServiceResult> UpdateAsync(TEntity entity)
+        {
+            ServiceResult serviceResult = new ServiceResult(ServiceResultType.Notknown);
+            try
+            {
+                _context.Update(entity);
+                var result = await _context.SaveChangesAsync();
+                if (result > 0)
+                {
+                    serviceResult.ServiceResultType = ServiceResultType.Success;
+                }
+                else serviceResult.ServiceResultType = ServiceResultType.Error;
+            }
+            catch (Exception e)
+            {
+                serviceResult.ServiceResultType = ServiceResultType.Error;
+            }
+
+            return serviceResult;
+
+
+
         }
     }
 }
